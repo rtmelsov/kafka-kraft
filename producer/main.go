@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"log"
 	"os"
+	"time"
 )
 
 type Item struct {
@@ -22,6 +24,8 @@ type Order struct {
 	TotalPrice float64 `json:"totalPrice"`
 }
 
+const topicWaitingFactor = 60 * time.Second
+
 func main() {
 	if len(os.Args) != 3 {
 		log.Fatalf("Пример использования: %s <bootstrap-servers> <topic>\n", os.Args[0])
@@ -29,6 +33,27 @@ func main() {
 
 	bServer := os.Args[1]
 	topic := os.Args[2]
+
+	// Cоздаём новый админский клиент.
+	a, err := kafka.NewAdminClient(&kafka.ConfigMap{"bootstrap.servers": bServer})
+	if err != nil {
+		log.Fatalf("Ошибка создания админского клиента: %s\n", err)
+	}
+
+	_, err = a.CreateTopics(
+		context.Background(),
+		[]kafka.TopicSpecification{{
+			Topic:             topic,
+			NumPartitions:     1,
+			ReplicationFactor: 1,
+		}},
+		kafka.SetAdminOperationTimeout(topicWaitingFactor),
+	)
+	if err != nil {
+		log.Fatalf("ошибка при создании топика: %s", err.Error())
+	}
+
+	log.Printf("Создан топик: %s", topic)
 
 	p, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": bServer,
