@@ -20,7 +20,7 @@ services:
     volumes:
       - kafka-0-data:/var/lib/kafka/data
   ui:
-    image: provectuslabs/kafka-ui:v0.7.0
+    image: provectuslabs/kafka-ui:latest
     depends_on:
       - kafka-0
     ports:

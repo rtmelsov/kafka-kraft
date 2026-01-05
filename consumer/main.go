@@ -35,15 +35,17 @@ func main() {
 	}
 
 	bServer := os.Args[1]
-	topics := os.Args[2]
+	group := os.Args[2]
+	topics := os.Args[3]
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":  bServer,
-		"group.id":           "my-test-group-new",
+		"group.id":           group,
 		"session.timeout.ms": 6000,
+		"enable.auto.commit": true,
 		"auto.offset.reset":  "earliest",
 		// "debug":              "generic,broker,cgrp",
 	})
