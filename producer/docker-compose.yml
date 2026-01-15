@@ -1,0 +1,10 @@
+services:
+    producer-2:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      environment:
+        - KAFKA_ADDR=kafka-0:9092
+        - TOPIC=orders
+        - SCHEMA_REGISTY=schema-registy:8081
+

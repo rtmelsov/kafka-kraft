@@ -1,0 +1,8 @@
+Топик "orders" создается автоматически при запуске Producer (см. producer/main.go).
+
+Параметры топика:
+- Partitions: 5
+- Replication Factor: 3
+
+Эквивалентная команда для ручного создания (для справки):
+kafka-topics.sh --create --topic orders --bootstrap-server localhost:9092 --partitions 5 --replication-factor 3
